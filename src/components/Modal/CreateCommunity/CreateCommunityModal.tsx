@@ -1,7 +1,10 @@
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter,Box, Divider,Text, Input, Stack, Checkbox, Flex, Icon } from '@chakra-ui/react';
+import { addDoc, doc, Firestore, getDoc, runTransaction, serverTimestamp, setDoc } from 'firebase/firestore';
 import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { BsFillPersonFill, BsFillEyeFill } from 'react-icons/bs';
 import {HiLockClosed} from 'react-icons/hi';
+import {auth, firestore} from '../../../firebase/clientApp'
 
 type CreateCommunityModalProps = {
     open:boolean;
@@ -9,9 +12,13 @@ type CreateCommunityModalProps = {
 };
 
 const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleClose}) => {
+    const [user] = useAuthState(auth)
+    console.log(user?.uid)
     const [communityName,setCommunityName] = React.useState('')
     const [charsRemaining,setCharsRemaining] = React.useState(21)
     const [communityType,setCommunityType] = React.useState('public')
+    const [error,setError] = React.useState('')
+    const [loading,setLoading] = React.useState(false)
 
     const handleChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value.length > 21) {
@@ -23,6 +30,62 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleCl
 
     const onCommunityTypeChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         setCommunityType(event.target.name)
+    }
+
+    const handleCreateCommunity = async () => {
+        if(error) setError('')
+        //Validate the community name (not taken, valid, between 3-21 characters, etc)
+        var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        if(format.test(communityName) || communityName.length < 3){//check if any of those characters in format in community name or less 3 characters
+            console.log('hi')
+            setError(
+                "Community names must be between 3-21 characters, and can only contain letters, numbers, or underscores"
+            )
+            return
+        }
+
+
+        //while its waiting to find and set the doc we show a loading symbol 
+        setLoading(true) 
+        
+        try {
+            //create a reference to the doc //function takes the firestore and the collection and the id of the specific item in the collection
+            const communityDocRef = doc(firestore, 'communities',communityName)
+            
+            //if we create a community we want the user who made it to join the community too, so if either one of those fail we want the other to fail too
+            //basically both happen or none happen so we use transactions from firebase to do so
+            await runTransaction(firestore, async(transaction) => {
+                const communityDoc = await transaction.get(communityDocRef) //actually get the doc so we can see if it exists or not - originally we used getDoc but now we do transaction.get
+                //if a community with that name exists then set error
+                if (communityDoc.exists()){
+                    throw new Error(`Sorry r/${communityName} is taken. Try another.`)
+                    }
+
+                //Create the community
+                //setDoc will update existing document or create a new one it uses the object given to it and stores it - now transaction.set so its part of the transaction
+                transaction.set(communityDocRef,{
+                    creatorID: user?.uid,
+                    createdAt: serverTimestamp(),
+                    numberOfMembers: 1,
+                    privacyType: communityType,
+                })     
+
+                //create community on the user data in the sub collections (we need to give the absolute path to the user)
+                //so in the subcollections of the user theres one called communitySnippets and that has the community name with the data of id and ismoderator
+                transaction.set(
+                    doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
+                    {
+                      communityId: communityName,
+                      isModerator: true,
+                    }
+                  );
+                })
+        } catch (error: any) {
+            console.log('handleCreateCommunityerror', error)
+            setError(error.message)
+        }
+        //Loading is done now
+        setLoading(false)
     }
 
     return (
@@ -42,6 +105,7 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleCl
                     <Text position='relative' top='28px' left='10px' width='20px' color='gray.400'>r/</Text>
                     <Input position='relative' value={communityName} size='sm' pl='22px' onChange={handleChange}/>
                     <Text fontSize='9pt' color={charsRemaining === 0 ? 'red' : 'gray.500'}>{charsRemaining} Characters remaining</Text>
+                    <Text fontSize='9pt' color='red' pt={1}>{error}</Text>
                     <Box mt={4} mb={4}>
                         <Text fontWeight={600} fontSize={15}>Community Type</Text>
                         <Stack spacing={2}>
@@ -90,7 +154,7 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleCl
                 <Button variant='outline' height='30px' mr={3} onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button height='30px' onClick={()=>{}}>Create Community</Button>
+                <Button height='30px' onClick={handleCreateCommunity} isLoading={loading}>Create Community</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
@@ -98,3 +162,7 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleCl
       )
 }
 export default CreateCommunityModal;
+
+function collection(firestore: Firestore, arg1: string) {
+    throw new Error('Function not implemented.');
+}

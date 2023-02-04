@@ -4,8 +4,10 @@ import { authModalState } from '../../../atoms/authModalAtom';
 import {useSetRecoilState} from 'recoil'
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 //get our firebase auth
-import {auth} from '../../../firebase/clientApp'
+import {auth, firestore} from '../../../firebase/clientApp'
 import {FIREBASE_ERRORS} from '../../../firebase/errors'
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { User } from 'firebase/auth';
 
 
 type SignUpProps = {
@@ -24,7 +26,7 @@ const SignUp:React.FC<SignUpProps> = () => {
 
     const [
         createUserWithEmailAndPassword,
-        user,
+        userCred,
         loading,
         userError,
       ] = useCreateUserWithEmailAndPassword(auth);
@@ -43,16 +45,29 @@ const SignUp:React.FC<SignUpProps> = () => {
         createUserWithEmailAndPassword(signUpForm.email,signUpForm.password)
     }
 
-
-
-    
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSignUpForm(prev => ({
             ...prev,
             [event.target.name]: event.target.value,
         }))
     }
+    //store the user in firestore collections with their data
+    const createUserDocument = async (user:User) => {
+        const userDocRef = doc(firestore,'users',user.uid)
+        await setDoc(userDocRef,user)
 
+        const citiesRef = collection(firestore, 'users');
+        addDoc(collection(citiesRef,user.uid,'communitySnippets'),{
+            test:'hi'
+        })
+    }
+
+    //everytime usercredentials change (a user is made) then run create user
+    React.useEffect(()=>{
+        if(userCred){
+            createUserDocument(JSON.parse(JSON.stringify(userCred.user)))
+        }
+    },[userCred])
 
     return (
         <form onSubmit={onSubmit}>
