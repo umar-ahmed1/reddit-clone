@@ -56,10 +56,6 @@ const SignUp:React.FC<SignUpProps> = () => {
         const userDocRef = doc(firestore,'users',user.uid)
         await setDoc(userDocRef,user)
 
-        const citiesRef = collection(firestore, 'users');
-        addDoc(collection(citiesRef,user.uid,'communitySnippets'),{
-            test:'hi'
-        })
     }
 
     //everytime usercredentials change (a user is made) then run create user
