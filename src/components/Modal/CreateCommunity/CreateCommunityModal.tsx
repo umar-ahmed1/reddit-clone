@@ -13,7 +13,6 @@ type CreateCommunityModalProps = {
 
 const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleClose}) => {
     const [user] = useAuthState(auth)
-    console.log(user?.uid)
     const [communityName,setCommunityName] = React.useState('')
     const [charsRemaining,setCharsRemaining] = React.useState(21)
     const [communityType,setCommunityType] = React.useState('public')
@@ -37,7 +36,6 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleCl
         //Validate the community name (not taken, valid, between 3-21 characters, etc)
         var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
         if(format.test(communityName) || communityName.length < 3){//check if any of those characters in format in community name or less 3 characters
-            console.log('hi')
             setError(
                 "Community names must be between 3-21 characters, and can only contain letters, numbers, or underscores"
             )
