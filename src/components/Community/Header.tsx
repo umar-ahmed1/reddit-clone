@@ -2,14 +2,17 @@ import { Community } from '@/src/atoms/communitiesAtom';
 import { Box, Button, Flex, Icon, Image, Text} from '@chakra-ui/react';
 import React from 'react';
 import { FaReddit } from 'react-icons/fa';
+import useCommunityData from '../../hooks/useCommunityData'
 
 type HeaderProps = {
     communityData: Community
 };
 
 const Header:React.FC<HeaderProps> = ({communityData}) => {
-    
-    const isJoined = false //eventually read from communitySnippets
+    //communityData is the data of the currently opened community, so if ur on r/thanos then its the data for r/thanos
+    //communityStateValue comtains all the snippets (communities) the user is in so loop thru them and see if the id matches this community id
+    const {communityStateValue, onJoinOrLeaveCommunity, loading} = useCommunityData();
+    const isJoined = !!communityStateValue.mySnippets.find(item => item.communityId === communityData.id) //!! convert to boolean
 
     return (
         <Flex direction='column' width='100%' height='146px'>
@@ -31,7 +34,8 @@ const Header:React.FC<HeaderProps> = ({communityData}) => {
                             pr={6} 
                             pl={6} 
                             variant={isJoined ? 'outline' : 'solid'}
-                            onClick = {() => {}}
+                            onClick = {() => onJoinOrLeaveCommunity(communityData,isJoined)}
+                            isLoading={loading}
                         >
                             {isJoined ? 'Joined' : 'Join'}
                         </Button>

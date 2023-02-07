@@ -9,3 +9,25 @@ export interface Community{
     createdAt?: Timestamp;
     imageURL?: string;
 }
+
+//make an object kind of thing with each snippet
+export interface CommunitySnippet {
+    communityId: string;
+    isModerator?: boolean;
+    imageURL?: string;
+}
+
+//the state contains an array of all the community snippets ur in
+interface CommunityState {
+    mySnippets: CommunitySnippet[]
+    //visitedCommunities
+}
+//default empty
+const defaultCommunityState: CommunityState = {
+    mySnippets: [],
+}
+//create the actual state 
+export const communityState = atom<CommunityState>({
+    key:'communitiesState',
+    default: defaultCommunityState
+})
