@@ -8,12 +8,11 @@ type PageContentProps = {
 const PageContent:React.FC<PageContentProps> = ({children}) => {
     //the children are the LHS and RHS react fragments
     return (
-        <Flex justify='center' padding='16px 0px' border='1px solid red'>
-            <Flex width='95%' justify='center' border='1px solid green' maxWidth='860px'>
+        <Flex justify='center' padding='16px 0px'>
+            <Flex width='95%' justify='center' maxWidth='860px'>
                 {/*LHS*/}
                 <Flex 
                     direction='column' 
-                    border='1px solid blue'
                     width={{base:'100%',md:'65%'}}
                     mr={{base:0,md:6}}
                 >
@@ -22,7 +21,6 @@ const PageContent:React.FC<PageContentProps> = ({children}) => {
                 {/*RHS*/}
                 <Flex 
                     direction='column' 
-                    border='1px solid blue'
                     display={{base:'none',md:'flex'}}
                     flexGrow={1}
                 >
