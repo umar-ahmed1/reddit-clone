@@ -15,7 +15,7 @@ import { firestore, storage } from '@/src/firebase/clientApp';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 
 type NewPostFormProps = {
-    
+    user: User
 };
 
 const formTabs: TabItemType[] = [
@@ -45,7 +45,6 @@ const formTabs: TabItemType[] = [
 export type TabItemType = {
     title:string;
     icon:typeof Icon.arguments;
-    user: User
 }
 
 const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
