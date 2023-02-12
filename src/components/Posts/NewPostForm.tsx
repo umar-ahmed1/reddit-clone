@@ -62,14 +62,14 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
         const {communityId} = router.query
         //create new post
         const newPost: Post = {
-            communityId:communityId as string,
-            creatorId:user.uid,
-            creatorDisplayName:user.email!.split('@')[0], //! means we know 100% itll be valid
-            title:textInputs.title,
-            body:textInputs.body,
-            numberOfComments:0,
-            voteStatus:0,
-            createdAt: serverTimestamp() as Timestamp
+            communityId: communityId as string,
+            creatorId: user.uid,
+            creatorDisplayName: user.email!.split('@')[0],
+            title: textInputs.title,
+            body: textInputs.body,
+            numberOfComments: 0,
+            voteStatus: 0,
+            createdAt: serverTimestamp() as Timestamp,
         }
         //store post in db
         setLoading(true)
@@ -89,15 +89,13 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
                 })
             }
             
-
+            //redirect user back to community page
+            router.back()
         } catch (error: any) {
             console.log('handleCreatePost error',error.message)
             setError(true)
         }
         setLoading(false)
-        
-        //redirect user back to community page
-        //router.back()
     }
 
 
@@ -152,7 +150,7 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
                 <Alert status='error'>
                     <AlertIcon />
                     <Text mr={2}>Error creating post</Text>
-              </Alert>    
+                </Alert>    
             )}
         </Flex>
     )

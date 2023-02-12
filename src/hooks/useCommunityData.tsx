@@ -81,10 +81,6 @@ const useCommunityData = () => {
 
 
     const leaveCommunity = async (communityId: string) => {
-        
-
-        
-
         //update the global community state snippets
 
         try{
