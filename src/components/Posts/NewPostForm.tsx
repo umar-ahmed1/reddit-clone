@@ -13,6 +13,7 @@ import { Post } from '@/src/atoms/postsAtom';
 import { addDoc, collection, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore';
 import { firestore, storage } from '@/src/firebase/clientApp';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import useSelectFile from '@/src/hooks/useSelectFIle';
 
 type NewPostFormProps = {
     user: User
@@ -54,7 +55,8 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
         title:'',
         body:''
     })
-    const [selectedFile,setSelectedFile] = React.useState<string>()
+
+    const {selectedFile,setSelectedFile,onSelectFile} = useSelectFile()
     const [loading,setLoading] = React.useState(false)
     const [error,setError] = React.useState(false)
 
@@ -98,22 +100,6 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
         setLoading(false)
     }
 
-
-    //select the image
-    const onSelectImage = (event:React.ChangeEvent<HTMLInputElement>) => {
-        //create a file reader
-        const reader = new FileReader()
-        //see if there are any files (there cud be many files so this is an array)
-        if (event.target.files?.[0]){
-            reader.readAsDataURL(event.target.files[0]) //FileReader reads the file
-            reader.onload = (readerEvent) => {     //onload triggers once the readasdataURL completes
-                if (readerEvent.target?.result){    //if there was a result
-                    setSelectedFile(readerEvent.target.result as string) //set the selected file
-                }
-            }   
-        }
-    }
-
     //fill the text form
     const onTextChange = (event:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {
@@ -141,7 +127,7 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
                 />}
                 {selectedTab === 'Images & Video' && <ImageUpload
                     selectedFile={selectedFile}
-                    onSelectImage={onSelectImage}
+                    onSelectImage={onSelectFile}
                     setSelectedTab={setSelectedTab}
                     setSelectedFile={setSelectedFile}
                 />}

@@ -62,7 +62,7 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({open,handleCl
                 //Create the community
                 //setDoc will update existing document or create a new one it uses the object given to it and stores it - now transaction.set so its part of the transaction
                 transaction.set(communityDocRef,{
-                    creatorID: user?.uid,
+                    creatorId: user?.uid,
                     createdAt: serverTimestamp(),
                     numberOfMembers: 1,
                     privacyType: communityType,
