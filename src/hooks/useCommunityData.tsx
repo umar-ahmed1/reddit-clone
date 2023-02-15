@@ -29,6 +29,7 @@ const useCommunityData = () => {
     }
     //get all the currently logged in user communites and store them in global state
     const getMySnippets = async () => {
+        if (!user) return
         setLoading(true)
         try{
             const snippetDocs = await getDocs(collection(firestore,`users/${user?.uid}/communitySnippets`)) //get all the communites user is in
@@ -110,7 +111,12 @@ const useCommunityData = () => {
 
     //get the snippets when the user changes
     React.useEffect(() =>{
-        if (!user) return //if no user yet then cancel
+        if (!user) {
+            setCommunityStateValue(prev => ({
+                ...prev,
+                mySnippets: []
+            }))
+        }
         getMySnippets();
     },[user])
 
