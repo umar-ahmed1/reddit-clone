@@ -1,5 +1,6 @@
 import { collection, deleteDoc, doc, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -12,11 +13,13 @@ import { auth, firestore, storage } from '../firebase/clientApp';
 const usePosts = () => {
     const [postStateValue,setPostStateValue] = useRecoilState(postState)
     const [user] = useAuthState(auth)
+    const router = useRouter()
     const currentCommunity = useRecoilValue(communityState).currentCommunity
     const setAuthModalState = useSetRecoilState(authModalState)
 
     //when you vote on post
-    const onVote = async (post: Post, vote: number, communityId: string) => {
+    const onVote = async (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => {
+        event.stopPropagation()
         //check for a user if not then open the authmodal
         if (!user?.uid){
             setAuthModalState({open:true,view:'login'})
@@ -110,9 +113,14 @@ const usePosts = () => {
             posts: updatedPosts,
             postVotes: updatedPostVotes,
         }))
-        
 
-        console.log(postStateValue)
+        //if theres a selected post also do this
+        if(postStateValue.selectedPost){
+            setPostStateValue((prev) => ({
+                ...prev,
+                selectedPost: updatedPost
+            }))
+        }
 
         } catch (error: any){
             console.log('onVote error',error.message)
@@ -121,7 +129,13 @@ const usePosts = () => {
     }
 
     //when you select a post
-    const onSelectPost = () => {
+    const onSelectPost = (post: Post) => {
+        setPostStateValue(prev => ({
+            ...prev,
+            selectedPost: post
+        }))
+        //send them to the page
+        router.push(`/r/${post.communityId}/comments/${post.id}`)
 
     }
 
