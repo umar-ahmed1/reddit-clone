@@ -24,7 +24,7 @@ const CommunityPage:React.FC<CommunityPageProps> = ({communityData}) => {
             ...prev,
             currentCommunity: communityData
         }))
-    },[])
+    },[communityData])
 
     //if the community data was an empty string the community doesnt exist so return page for that
     if(!communityData)

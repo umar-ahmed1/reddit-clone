@@ -56,7 +56,8 @@ const useCommunityData = () => {
             const batch=writeBatch(firestore) 
             const newSnippet: CommunitySnippet = { //create the snippet to add to database
                 communityId: communityData.id,
-                imageURL: communityData.imageURL || ''
+                imageURL: communityData.imageURL || '',
+                isModerator: user?.uid === communityData.creatorId,
             }
             //create a new community snippet for the user (we do batch.set because it doesnt exist)
             batch.set(doc(firestore,`users/${user?.uid}/communitySnippets`,communityData.id),newSnippet)

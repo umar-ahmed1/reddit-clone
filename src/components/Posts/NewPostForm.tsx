@@ -16,7 +16,8 @@ import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import useSelectFile from '@/src/hooks/useSelectFIle';
 
 type NewPostFormProps = {
-    user: User
+    user: User;
+    communityImageURL?: string;
 };
 
 const formTabs: TabItemType[] = [
@@ -48,7 +49,7 @@ export type TabItemType = {
     icon:typeof Icon.arguments;
 }
 
-const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
+const NewPostForm:React.FC<NewPostFormProps> = ({user,communityImageURL}) => {
     const router = useRouter()
     const [selectedTab,setSelectedTab] = React.useState(formTabs[0].title)
     const [textInputs,setTextInputs] = React.useState({
@@ -65,6 +66,7 @@ const NewPostForm:React.FC<NewPostFormProps> = ({user}) => {
         //create new post
         const newPost: Post = {
             communityId: communityId as string,
+            communityImageURL: communityImageURL || '',
             creatorId: user.uid,
             creatorDisplayName: user.email!.split('@')[0],
             title: textInputs.title,

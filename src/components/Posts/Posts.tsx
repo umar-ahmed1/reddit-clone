@@ -47,7 +47,7 @@ const Posts:React.FC<PostsProps> = ({communityData}) => {
     //when a page loads get all the posts
     React.useEffect(() => {
         getPosts()
-    },[])
+    },[communityData])
     
     return (
         <>

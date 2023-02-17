@@ -15,6 +15,7 @@ import {
 } from "react-icons/io5";
 import moment from 'moment';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 
 type PostItemProps = {
@@ -24,9 +25,10 @@ type PostItemProps = {
     onVote: (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote:number, communityId: string) => void
     onDeletePost: (post : Post) => Promise<boolean>
     onSelectPost?: (post: Post) => void;
+    homePage?: boolean;
 }
 
-const PostItem:React.FC<PostItemProps> = ({post,userIsCreator,userVoteValue,onVote,onDeletePost,onSelectPost}) => {
+const PostItem:React.FC<PostItemProps> = ({post,userIsCreator,userVoteValue,onVote,onDeletePost,onSelectPost,homePage}) => {
     const [loadingImage,setLoadingImage] = React.useState(true)
     const [error,setError] = React.useState(false)
     const [loadingDelete,setLoadingDelete] = React.useState(false)
@@ -93,6 +95,19 @@ const PostItem:React.FC<PostItemProps> = ({post,userIsCreator,userVoteValue,onVo
             <Flex direction='column' width='100%'>
                 <Stack spacing={1} p='10px'>
                     <Stack direction='row' spacing={0.6} align='center' fontSize='9pt'>
+                        {homePage && (
+                            <>
+                                {post.communityImageURL ? (
+                                    <Image src={post.communityImageURL} borderRadius='full' boxSize='18px' mr={2}/>
+                                ) : ( 
+                                    <Icon as={FaReddit} fontSize='18pt' mr={1} color='blue.500'/>
+                                )}
+                                <Link href={`r/${post.communityId}`}>
+                                    <Text fontWeight={700} _hover={{textDecoration:'underline'}} onClick={(event) => event.stopPropagation()}>{`r/${post.communityId}`}</Text>
+                                </Link>
+                                <Icon as={BsDot} color='gray.500' fontSize={8}/>
+                            </>
+                        )}
                         <Text mr={1}>
                             Posted by u/{post.creatorDisplayName}
                         </Text>
