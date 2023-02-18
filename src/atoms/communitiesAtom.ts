@@ -19,12 +19,14 @@ export interface CommunitySnippet {
 
 //the state contains an array of all the community snippets ur in
 interface CommunityState {
-    mySnippets: CommunitySnippet[]
-    currentCommunity?: Community
+    mySnippets: CommunitySnippet[];
+    currentCommunity?: Community;
+    snippetsFetched: boolean;
 }
 //default empty
 const defaultCommunityState: CommunityState = {
     mySnippets: [],
+    snippetsFetched: false,
 }
 //create the actual state 
 export const communityState = atom<CommunityState>({

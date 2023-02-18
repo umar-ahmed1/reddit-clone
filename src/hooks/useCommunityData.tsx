@@ -38,7 +38,8 @@ const useCommunityData = () => {
             const snippets = snippetDocs.docs.map(doc => ({...doc.data()})) //convert all the doc items into objects
             setCommunityStateValue(prev => ({ //put the snippets we got into the global state
                 ...prev,
-                mySnippets : snippets as CommunitySnippet[]
+                mySnippets : snippets as CommunitySnippet[],
+                snippetsFetched:true
             }))
         } catch(error:any){
             console.log('getMySnippetsError',error)
@@ -137,7 +138,8 @@ const useCommunityData = () => {
         if (!user) {
             setCommunityStateValue(prev => ({
                 ...prev,
-                mySnippets: []
+                mySnippets: [],
+                snippetsFetched:false,
             }))
         }
         getMySnippets();

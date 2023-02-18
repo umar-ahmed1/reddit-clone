@@ -166,7 +166,6 @@ const usePosts = () => {
         //get all the posts the user has voted on but only in that community
         const postVotesQuery = query(collection(firestore,'users',`${user?.uid}/postVotes`),where('communityId', '==', communityId))
         const postVoteDocs = await getDocs(postVotesQuery)
-        console.log(postVoteDocs)
         const postVotes = postVoteDocs.docs.map(doc => ({id: doc.id, ...doc.data()}))
         setPostStateValue(prev => ({
             ...prev,
