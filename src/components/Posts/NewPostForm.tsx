@@ -13,7 +13,7 @@ import { Post } from '@/src/atoms/postsAtom';
 import { addDoc, collection, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore';
 import { firestore, storage } from '@/src/firebase/clientApp';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
-import useSelectFile from '@/src/hooks/useSelectFIle';
+import useSelectFile from '@/src/hooks/useSelectFile';
 
 type NewPostFormProps = {
     user: User;
