@@ -5,10 +5,9 @@ import {RiCakeLine} from 'react-icons/ri'
 import React from 'react';
 import moment from 'moment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore, storage } from '@/src/firebase/clientApp';
-import useSelectFile from '@/src/hooks/useSelectFIle';
+import useSelectFile from '@/src/hooks/useSelectFile';
 import { FaReddit } from 'react-icons/fa';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
